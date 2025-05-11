@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { DrizzleService } from '../drizzle/drizzle.service';
 import * as schema from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class UsersService {
-  constructor(private db: PostgresJsDatabase<typeof schema>) {}
+  constructor(private drizzleService: DrizzleService) {}
+
+  private get db() {
+    return this.drizzleService.getDb();
+  }
 
   async findOne(username: string): Promise<any | undefined> {
     const [user] = await this.db

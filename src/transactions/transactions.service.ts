@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { DrizzleService } from '../drizzle/drizzle.service';
 import { eq, sql } from 'drizzle-orm';
 import * as schema from '../drizzle/schema';
 import pdf from 'pdf-parse';
@@ -8,7 +8,11 @@ import { TransactionDto } from './dto/transaction.dto';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private db: PostgresJsDatabase<typeof schema>) {}
+  constructor(private drizzleService: DrizzleService) {}
+
+  private get db() {
+    return this.drizzleService.getDb();
+  }
 
   async extractTextFromPdf(pdfBuffer: Buffer): Promise<string> {
     const data = await pdf(pdfBuffer);
